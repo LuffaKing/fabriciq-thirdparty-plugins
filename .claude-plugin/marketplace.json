@@ -1,0 +1,21 @@
+{
+  "name": "fabriciq",
+  "owner": {
+    "name": "Microsoft"
+  },
+  "metadata": {
+    "description": "Microsoft Fabric IQ plugin for Claude."
+  },
+  "plugins": [
+    {
+      "name": "fabriciq",
+      "source": "./plugins/fabriciq",
+      "description": "Ask questions about your Power BI reports and semantic models in Microsoft Fabric and get plain-language answers backed by your data.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Microsoft"
+      },
+      "license": "MIT"
+    }
+  ]
+}

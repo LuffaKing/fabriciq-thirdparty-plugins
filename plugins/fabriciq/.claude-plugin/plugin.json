@@ -1,0 +1,15 @@
+{
+  "name": "fabriciq",
+  "displayName": "Fabric IQ",
+  "version": "0.1.0",
+  "description": "Ask questions about your Power BI reports and semantic models in Microsoft Fabric and get plain-language answers backed by your data.",
+  "author": {
+    "name": "Microsoft",
+    "url": "https://www.microsoft.com"
+  },
+  "license": "MIT",
+  "icon": "./logo.png",
+  "documentationUrl": "https://learn.microsoft.com/fabric/",
+  "supportUrl": "https://support.fabric.microsoft.com/support",
+  "privacyPolicyUrl": "https://go.microsoft.com/fwlink/?LinkId=521839"
+}
