@@ -13,7 +13,7 @@ for details.
 In Claude Code:
 
 ```
-/plugin marketplace add microsoft/fabriciq-claude-plugin
+/plugin marketplace add microsoft/fabriciq-thirdparty-plugins
 /plugin install fabriciq@fabriciq
 ```
 
