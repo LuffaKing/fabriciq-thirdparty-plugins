@@ -38,7 +38,8 @@ object-level security still applies. It reads data and runs queries; it does not
 create, change or delete reports, models or measures.
 
 Your questions and the query results are sent between your AI assistant (Claude
-or ChatGPT) and Microsoft Fabric. The plugin itself stores no data and contains no credentials. See the
+or ChatGPT) and Microsoft Fabric. The plugin itself stores no data and contains
+no credentials. See the
 [Microsoft Privacy Statement](https://go.microsoft.com/fwlink/?LinkId=521839).
 
 ## Support
@@ -48,7 +49,6 @@ or ChatGPT) and Microsoft Fabric. The plugin itself stores no data and contains 
 
 ## License
 
-MIT. The bundled skill is adapted from
-[microsoft/skills-for-fabric](https://github.com/microsoft/skills-for-fabric) at
-commit bc42aaf734771bf752c1d7082dd91e5a6ca72b9f; upstream attribution is preserved
-in LICENSE.
+MIT; see [LICENSE](LICENSE). The bundled skill is adapted from
+[microsoft/skills-for-fabric](https://github.com/microsoft/skills-for-fabric)
+(MIT, Microsoft Corporation) at commit bc42aaf734771bf752c1d7082dd91e5a6ca72b9f.

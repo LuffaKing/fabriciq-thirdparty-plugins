@@ -17,9 +17,10 @@ The host supplies standard MCP headers and the user's OAuth authorization.
 ## Authentication
 
 Use the host's Connect/Reconnect interface and delegated Microsoft Entra OAuth.
-The pilot requests only `Item.Read.All` and `Item.Execute.All` from Power BI
-Service. `offline_access` enables token refresh; it is not an additional Fabric
-data permission.
+The connection requests the `https://api.fabric.microsoft.com/.default` scope,
+which grants the delegated Power BI Service permissions consented on the app
+registration (`Item.Read.All` and `Item.Execute.All`). `offline_access` enables
+token refresh; it is not an additional Fabric data permission.
 
 Do not request passwords, certificates, access tokens, or client secrets in chat.
 Do not run Azure CLI, device-code login, client-credentials authentication, or
@@ -29,7 +30,7 @@ configured outside the package by its administrator.
 ## Runtime contracts
 
 Discover tools and their current input schemas from the connected service.
-The upstream skill's names and parameter examples are guidance, not a substitute
+The tool names and parameter examples in SKILL.md are guidance, not a substitute
 for the current schema. Do not send an argument the available tool does not
 support. If the required tool is absent, report the missing capability instead
 of inventing a tool or changing endpoints.
@@ -49,5 +50,4 @@ For ambiguous artifacts, ask the user to choose. Do not invent inaccessible data
 Respect filters, result limits and truncation; show concise grounded answers.
 
 Tool requests and results travel between the selected AI provider and Microsoft
-Fabric. Test with dedicated synthetic data approved for use with that provider;
-do not use confidential production data or publish administrator credentials.
+Fabric. Never include credentials or secrets in answers.

@@ -4,7 +4,7 @@
     "name": "Microsoft"
   },
   "metadata": {
-    "description": "Microsoft Fabric IQ plugin for Claude."
+    "description": "Microsoft Fabric IQ plugin for Claude Code."
   },
   "plugins": [
     {

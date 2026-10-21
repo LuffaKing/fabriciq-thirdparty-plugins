@@ -8,8 +8,9 @@
     "url": "https://www.microsoft.com"
   },
   "license": "MIT",
-  "icon": "./logo.png",
+  "icon": "./assets/logo.png",
   "documentationUrl": "https://learn.microsoft.com/fabric/",
   "supportUrl": "https://support.fabric.microsoft.com/support",
-  "privacyPolicyUrl": "https://go.microsoft.com/fwlink/?LinkId=521839"
+  "privacyPolicyUrl": "https://go.microsoft.com/fwlink/?LinkId=521839",
+  "termsOfServiceUrl": "https://www.microsoft.com/licensing/terms/"
 }

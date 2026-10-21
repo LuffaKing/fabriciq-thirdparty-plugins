@@ -6,14 +6,16 @@
 .DESCRIPTION
     Packages only the files the Agent Plugins format needs (plugin.json, mcp.json, skills/, assets/,
     README.md, LICENSE) from plugins/fabriciq into dist/fabriciq-chatgpt.zip, with plugin.json at
-    the ZIP root. Claude-only files (.claude-plugin/, .mcp.json, logo.png) are left out.
+    the ZIP root. Claude-only files (.claude-plugin/, .mcp.json) are left out.
 
-.PARAMETER AllowTodoClientId
-    Builds even if mcp.json still contains the TODO client ID placeholder. Use for local tests only.
+.PARAMETER AllowPlaceholders
+    Builds even if mcp.json still has the TODO client ID or plugin.json still has the REVIEW_*
+    test-case placeholders. Use for local tests only. Alias: -AllowTodoClientId.
 #>
 [CmdletBinding()]
 param(
-    [switch]$AllowTodoClientId
+    [Alias('AllowTodoClientId')]
+    [switch]$AllowPlaceholders
 )
 
 $ErrorActionPreference = 'Stop'
@@ -21,7 +23,7 @@ Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
-$pluginDir = (Resolve-Path (Join-Path $repoRoot 'plugins\fabriciq')).Path
+$pluginDir = (Resolve-Path (Join-Path (Join-Path $repoRoot 'plugins') 'fabriciq')).Path
 $distDir = Join-Path $repoRoot 'dist'
 $zipPath = Join-Path $distDir 'fabriciq-chatgpt.zip'
 
@@ -42,12 +44,23 @@ foreach ($json in @('plugin.json', 'mcp.json')) {
     }
 }
 
-if ((Get-Content (Join-Path $pluginDir 'mcp.json') -Raw) -match 'TODO-') {
-    if ($AllowTodoClientId) {
-        Write-Warning 'mcp.json still contains a TODO client ID. Do not submit this package.'
+$problems = @()
+$mcp = Get-Content (Join-Path $pluginDir 'mcp.json') -Raw
+$clientIds = @(($mcp | ConvertFrom-Json).mcpServers.PSObject.Properties.Value |
+    ForEach-Object { $_.extensions.'com.openai'.auth.client.clientId })
+if ($mcp -match 'TODO-' -or $clientIds.Count -eq 0 -or ($clientIds | Where-Object { [string]::IsNullOrWhiteSpace($_) })) {
+    $problems += 'mcp.json has a missing, empty or TODO client ID'
+}
+if ((Get-Content (Join-Path $pluginDir 'plugin.json') -Raw) -match 'REVIEW_[A-Z_]+_ID') {
+    $problems += 'plugin.json still has REVIEW_* test-case placeholders'
+}
+if ($problems) {
+    $message = ($problems -join '; ') + '.'
+    if ($AllowPlaceholders) {
+        Write-Warning "$message Do not submit this package."
     }
     else {
-        throw 'mcp.json still contains a TODO client ID. Set the ChatGPT Entra app client ID, or pass -AllowTodoClientId for a local test build.'
+        throw "$message Fix them, or pass -AllowPlaceholders for a local test build."
     }
 }
 
@@ -57,7 +70,8 @@ if (Test-Path $zipPath) { Remove-Item $zipPath -Force }
 $files = foreach ($item in $include) {
     $path = Join-Path $pluginDir $item
     if (Test-Path $path -PathType Container) {
-        Get-ChildItem $path -Recurse -File
+        Get-ChildItem $path -Recurse -File |
+            Where-Object { $_.Name -notin @('.DS_Store', 'Thumbs.db', 'desktop.ini') }
     }
     else {
         Get-Item $path

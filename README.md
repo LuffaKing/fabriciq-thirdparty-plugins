@@ -31,24 +31,32 @@ https://fabriciq.svc.cloud.microsoft/v1/mcp/fabriciq
 
 ## Configure Claude Code
 
-1. Add the marketplace and install the plugin:
+Microsoft Entra doesn't support dynamic client registration, so Claude Code needs
+an Entra app registration with a loopback redirect URI.
+
+1. Register an Entra app as described in step 1 of
+   [Configure Claude (web and desktop)](#configure-claude-web-and-desktop), but
+   add the redirect URI `http://localhost:8080/callback` (platform
+   **Mobile and desktop applications**, or **Web** if you use a client secret).
+2. Add the MCP server with the app's client ID. `--client-secret` prompts for
+   the secret and stores it in your system keychain or credentials file:
+
+   ```
+   claude mcp add --transport http --client-id <your-app-client-id> --client-secret --callback-port 8080 fabriciq https://fabriciq.svc.cloud.microsoft/v1/mcp/fabriciq
+   ```
+
+   Leave out `--client-secret` if the app is a public client.
+3. Optionally, install the plugin to add the Fabric IQ skill:
 
    ```
    /plugin marketplace add microsoft/fabriciq-thirdparty-plugins
    /plugin install fabriciq@fabriciq
    ```
 
-2. Restart Claude Code, then run `/mcp`.
-3. Select **fabriciq**, choose **Authenticate**, and sign in with your Microsoft
-   Entra account in the browser window that opens.
-4. Run `/mcp` again and confirm that **fabriciq** shows as connected.
-5. Ask a question, for example "What were total sales by region last quarter?"
-
-To connect without the plugin, add only the MCP server:
-
-```
-claude mcp add --transport http fabriciq https://fabriciq.svc.cloud.microsoft/v1/mcp/fabriciq
-```
+4. Restart Claude Code, run `/mcp`, select **fabriciq**, choose
+   **Authenticate**, and sign in with your Microsoft Entra account.
+5. Run `/mcp` again and confirm that **fabriciq** shows as connected, then ask a
+   question, for example "What were total sales by region last quarter?"
 
 ## Configure Claude (web and desktop)
 
@@ -62,7 +70,9 @@ once; each user then does steps 3-5.
      (multitenant), or your own tenant only.
    - **Redirect URI (Web):** `https://claude.ai/api/mcp/auth_callback`
    - **API permissions:** delegated **Power BI Service** permissions
-     `Item.Read.All` and `Item.Execute.All`, plus `offline_access`.
+     `Item.Read.All` and `Item.Execute.All`, plus `offline_access`. The
+     connection requests the `https://api.fabric.microsoft.com/.default` scope,
+     which covers these consented permissions.
    - Create a client secret under **Certificates & secrets**.
 2. Grant admin consent if your tenant blocks user consent (see
    [Admin consent](#admin-consent)).
@@ -113,8 +123,12 @@ Use this to test the full plugin, including the skill, before it's published.
      or the path of your local clone.
    - **ChatGPT desktop:** open the cloned repository as a project. ChatGPT reads
      `.agents/plugins/marketplace.json` from the repository root.
-3. Install **Fabric IQ** from the marketplace and sign in with your Microsoft
-   Entra account when prompted.
+3. Install **Fabric IQ** from the marketplace. When prompted, enter the app's
+   client secret (it's sent with `client_secret_post` and is never stored in
+   this repository), then sign in with your Microsoft Entra account. If your
+   client doesn't prompt for a secret, use
+   [Connect as a custom MCP server](#connect-as-a-custom-mcp-server-chatgpt-web)
+   instead.
 4. Ask a question, for example "What were total sales by region last quarter?"
 
 ### Build the submission package
@@ -128,18 +142,30 @@ with:
 
 The script writes `dist/fabriciq-chatgpt.zip` with only the files ChatGPT needs
 (`plugin.json`, `mcp.json`, `skills/`, `assets/`, `README.md`, `LICENSE`). It
-fails while `mcp.json` still contains the TODO client ID; pass
-`-AllowTodoClientId` for a local test build.
+fails while `mcp.json` has a missing or TODO client ID, or `plugin.json` still
+has the `REVIEW_*` placeholders; pass `-AllowPlaceholders` for a local test
+build.
+
+`mcp.json` uses the OpenAI `extensions["com.openai"]` block for OAuth, so it
+doesn't validate against the strict agent-plugins.org schema. That's expected.
 
 Before submitting at platform.openai.com/plugins:
 
 - Set the production ChatGPT Entra app client ID in `mcp.json`. The client
   secret is entered in the OpenAI portal, never in this repository.
 - Replace `assets/icon.png` and `assets/logo.png` with the final Fabric IQ
-  artwork, and add screenshots if available.
+  artwork, and prepare screenshots.
 - Replace `REVIEW_WORKSPACE_ID` and `REVIEW_REPORT_ID` in the `review` test
   cases in `plugin.json` with items from the reviewer test workspace.
+- Provide a demo recording URL (`demo_recording_url`) of the plugin working;
+  it's required for MCP review.
+- Provide a dedicated reviewer test account that signs in without MFA and has
+  access to the test workspace.
+- Confirm the terms of service URL in `.claude-plugin/plugin.json`.
 - Verify the MCP server domain at `/.well-known/openai-apps-challenge`.
+
+For the Claude directory, submit the plugin and also submit the MCP server as a
+connector.
 
 ## Admin consent
 
@@ -168,10 +194,9 @@ https://login.microsoftonline.com/<tenant-id>/adminconsent?client_id=<app-client
 plugins/fabriciq/                 The Fabric IQ plugin
   .claude-plugin/plugin.json      Claude plugin manifest
   .mcp.json                       Claude MCP server configuration
-  logo.png                        Claude plugin icon
   plugin.json                     ChatGPT plugin manifest (Agent Plugins format)
   mcp.json                        ChatGPT MCP server and OAuth configuration
-  assets/                         ChatGPT icon and logo
+  assets/                         Icon and logo, shared by both hosts
   skills/fabriciq/                Fabric IQ skill, shared by both hosts
 scripts/build-chatgpt-zip.ps1     Builds the ChatGPT submission ZIP
 ```
