@@ -37,8 +37,8 @@ semantic models you already have access to, and existing row-level and
 object-level security still applies. It reads data and runs queries; it does not
 create, change or delete reports, models or measures.
 
-Your questions and the query results are sent between Claude and Microsoft
-Fabric. The plugin itself stores no data and contains no credentials. See the
+Your questions and the query results are sent between your AI assistant (Claude
+or ChatGPT) and Microsoft Fabric. The plugin itself stores no data and contains no credentials. See the
 [Microsoft Privacy Statement](https://go.microsoft.com/fwlink/?LinkId=521839).
 
 ## Support

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+  "mcpServers": {
+    "fabriciq": {
+      "type": "streamable-http",
+      "url": "https://fabriciq.svc.cloud.microsoft/v1/mcp/fabriciq",
+      "extensions": {
+        "com.openai": {
+          "auth": {
+            "type": "oauth",
+            "client": {
+              "mode": "provided",
+              "clientId": "TODO-CHATGPT-ENTRA-APP-CLIENT-ID",
+              "tokenEndpointAuthMethod": "client_secret_post"
+            },
+            "baseScopes": [
+              "https://api.fabric.microsoft.com/.default",
+              "offline_access"
+            ]
+          }
+        }
+      }
+    }
+  }
+}
