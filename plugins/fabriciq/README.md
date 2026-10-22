@@ -25,10 +25,16 @@ one you mean.
 
 ## Getting started
 
-1. Install the Fabric IQ plugin.
-2. Connect the Fabric IQ connector when prompted, and sign in with your
+1. Register a Microsoft Entra app. Entra doesn't support dynamic client
+   registration, so every host needs its own app registration and client ID.
+   See the setup steps for your host in the
+   [repository README](https://github.com/microsoft/fabriciq-thirdparty-plugins#readme).
+   In Claude Code, add the Fabric IQ MCP server with your app's client ID and
+   `--scope user`.
+2. Install the Fabric IQ plugin.
+3. Connect the Fabric IQ connector when prompted, and sign in with your
    Microsoft Entra account.
-3. Ask a question about your data.
+4. Ask a question about your data.
 
 ## Data and privacy
 

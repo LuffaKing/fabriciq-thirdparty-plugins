@@ -46,9 +46,13 @@ foreach ($json in @('plugin.json', 'mcp.json')) {
 
 $problems = @()
 $mcp = Get-Content (Join-Path $pluginDir 'mcp.json') -Raw
-$clientIds = @(($mcp | ConvertFrom-Json).mcpServers.PSObject.Properties.Value |
-    ForEach-Object { $_.extensions.'com.openai'.auth.client.clientId })
-if ($mcp -match 'TODO-' -or $clientIds.Count -eq 0 -or ($clientIds | Where-Object { [string]::IsNullOrWhiteSpace($_) })) {
+$mcpServers = ($mcp | ConvertFrom-Json).mcpServers
+$servers = @(if ($mcpServers) { $mcpServers.PSObject.Properties.Value })
+# Every server needs a non-blank client ID; check each one rather than a filtered pipeline result.
+$missingClientIds = @($servers | Where-Object {
+        [string]::IsNullOrWhiteSpace([string]$_.extensions.'com.openai'.auth.client.clientId)
+    })
+if ($mcp -match 'TODO-' -or $servers.Count -eq 0 -or $missingClientIds.Count -gt 0) {
     $problems += 'mcp.json has a missing, empty or TODO client ID'
 }
 if ((Get-Content (Join-Path $pluginDir 'plugin.json') -Raw) -match 'REVIEW_[A-Z_]+_ID') {

@@ -38,11 +38,13 @@ an Entra app registration with a loopback redirect URI.
    [Configure Claude (web and desktop)](#configure-claude-web-and-desktop), but
    add the redirect URI `http://localhost:8080/callback` (platform
    **Mobile and desktop applications**, or **Web** if you use a client secret).
-2. Add the MCP server with the app's client ID. `--client-secret` prompts for
-   the secret and stores it in your system keychain or credentials file:
+2. Add the MCP server with the app's client ID. `--scope user` makes it
+   available in every project; without it, Claude Code adds the server only to
+   the current project. `--client-secret` prompts for the secret and stores it
+   in your system keychain or credentials file:
 
    ```
-   claude mcp add --transport http --client-id <your-app-client-id> --client-secret --callback-port 8080 fabriciq https://fabriciq.svc.cloud.microsoft/v1/mcp/fabriciq
+   claude mcp add --transport http --scope user --client-id <your-app-client-id> --client-secret --callback-port 8080 fabriciq https://fabriciq.svc.cloud.microsoft/v1/mcp/fabriciq
    ```
 
    Leave out `--client-secret` if the app is a public client.
@@ -67,7 +69,8 @@ once; each user then does steps 3-5.
 1. In the [Microsoft Entra admin center](https://entra.microsoft.com), register
    an app:
    - **Supported account types:** accounts in any organizational directory
-     (multitenant), or your own tenant only.
+     (multitenant). The Fabric IQ server directs sign-in to the
+     `organizations` endpoint, which rejects single-tenant apps.
    - **Redirect URI (Web):** `https://claude.ai/api/mcp/auth_callback`
    - **API permissions:** delegated **Power BI Service** permissions
      `Item.Read.All` and `Item.Execute.All`, plus `offline_access`. The
@@ -118,9 +121,10 @@ Use this to test the full plugin, including the skill, before it's published.
 
 1. In `plugins/fabriciq/mcp.json`, replace `TODO-CHATGPT-ENTRA-APP-CLIENT-ID`
    with your Entra app's client ID. Don't commit your own client ID.
-2. Add this repository as a marketplace:
-   - **Codex CLI:** `codex plugin marketplace add microsoft/fabriciq-thirdparty-plugins`,
-     or the path of your local clone.
+2. Add your local clone as a marketplace. Don't add the GitHub repository
+   (`microsoft/fabriciq-thirdparty-plugins`): that copy still has the TODO
+   client ID, not the one you set in step 1.
+   - **Codex CLI:** `codex plugin marketplace add <path-to-your-local-clone>`
    - **ChatGPT desktop:** open the cloned repository as a project. ChatGPT reads
      `.agents/plugins/marketplace.json` from the repository root.
 3. Install **Fabric IQ** from the marketplace. When prompted, enter the app's
