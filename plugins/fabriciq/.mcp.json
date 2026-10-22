@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "fabriciq": {
+      "type": "http",
+      "url": "https://fabriciq.svc.cloud.microsoft/v1/mcp/fabriciq"
+    }
+  }
+}

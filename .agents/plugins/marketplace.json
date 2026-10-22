@@ -1,0 +1,20 @@
+{
+  "name": "fabriciq",
+  "interface": {
+    "displayName": "Fabric IQ"
+  },
+  "plugins": [
+    {
+      "name": "fabriciq",
+      "source": {
+        "source": "local",
+        "path": "./plugins/fabriciq"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

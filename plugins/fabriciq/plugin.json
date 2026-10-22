@@ -1,0 +1,96 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "fabriciq",
+  "version": "0.1.0",
+  "description": "Ask questions about your Power BI reports and semantic models in Microsoft Fabric and get plain-language answers backed by your data.",
+  "author": {
+    "name": "Microsoft",
+    "url": "https://www.microsoft.com"
+  },
+  "homepage": "https://learn.microsoft.com/fabric/",
+  "repository": "https://github.com/microsoft/fabriciq-thirdparty-plugins",
+  "license": "MIT",
+  "keywords": ["fabric", "power-bi", "semantic-model", "dax", "analytics"],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Fabric IQ",
+        "shortDescription": "Ask questions about Power BI",
+        "longDescription": "Fabric IQ finds the Power BI reports and semantic models you can access in Microsoft Fabric, reads their tables, measures and relationships, writes and runs the DAX query for you, and explains the result in plain language. It runs with your own delegated permissions, respects row-level and object-level security, and is read-only: it never creates, changes or deletes reports, models or measures.",
+        "developerName": "Microsoft",
+        "category": "Productivity",
+        "capabilities": [
+          "Find Power BI reports and semantic models",
+          "Read report and semantic model metadata",
+          "Run read-only DAX queries"
+        ],
+        "websiteURL": "https://learn.microsoft.com/fabric/",
+        "supportURL": "https://support.fabric.microsoft.com/support",
+        "privacyPolicyURL": "https://go.microsoft.com/fwlink/?LinkId=521839",
+        "termsOfServiceURL": "https://www.microsoft.com/licensing/terms/",
+        "defaultPrompt": [
+          "What were total sales by region last quarter?",
+          "Which products had the biggest drop in margin compared to last year?",
+          "Show the top 10 customers by revenue in the Contoso Sales report."
+        ],
+        "composerIcon": "./assets/icon.png",
+        "logo": "./assets/logo.png"
+      },
+      "review": {
+        "test_cases": {
+          "positive": [
+            {
+              "description": "Answer a question from a report",
+              "prompt": "What were total sales by region last year in the Contoso Sales report?",
+              "tools_triggered": "DiscoverArtifacts, GetReportMetadata, GetSemanticModelSchema, ExecuteQuery",
+              "expected_behavior": "Finds the report, reads its metadata and the underlying model schema, runs a DAX query, and returns sales by region with the values from the model."
+            },
+            {
+              "description": "Answer a question from a semantic model",
+              "prompt": "Using the Contoso Sales semantic model, how many orders were placed per month this year?",
+              "tools_triggered": "DiscoverArtifacts, GetSemanticModelSchema, ExecuteQuery",
+              "expected_behavior": "Finds the semantic model, reads its schema, runs a DAX query, and returns the monthly order counts."
+            },
+            {
+              "description": "Resolve a pasted Fabric link",
+              "prompt": "Summarize the key numbers in this report: https://app.powerbi.com/groups/REVIEW_WORKSPACE_ID/reports/REVIEW_REPORT_ID",
+              "tools_triggered": "ResolveFabricItem, GetReportMetadata, GetSemanticModelSchema, ExecuteQuery",
+              "expected_behavior": "Resolves the URL to the report, reads its metadata, and summarizes its main measures with values from the model."
+            },
+            {
+              "description": "Filter by a specific value",
+              "prompt": "What were total sales for the Contoso Bikes product category last year?",
+              "tools_triggered": "DiscoverArtifacts, GetSemanticModelSchema, ValueSearch, ExecuteQuery",
+              "expected_behavior": "Uses ValueSearch to match the category value in the model, filters the DAX query on it, and returns the total."
+            },
+            {
+              "description": "Clarify when several items match",
+              "prompt": "What is our total revenue?",
+              "tools_triggered": "DiscoverArtifacts",
+              "expected_behavior": "When more than one report or semantic model matches, asks the user which one to use instead of guessing."
+            }
+          ],
+          "negative": [
+            {
+              "description": "Write request is declined",
+              "prompt": "Create a new measure called Profit Margin in the Contoso Sales model."
+            },
+            {
+              "description": "Deletion request is declined",
+              "prompt": "Delete the Contoso Sales report."
+            },
+            {
+              "description": "Request unrelated to Fabric data",
+              "prompt": "Book a flight to Seattle for next Tuesday."
+            }
+          ]
+        },
+        "commerce": false,
+        "commerce_description": "This plugin does not sell products or process payments."
+      },
+      "publication": {
+        "release_notes": "Initial release: ask questions about Power BI reports and semantic models in Microsoft Fabric and get plain-language answers backed by your data."
+      }
+    }
+  }
+}
