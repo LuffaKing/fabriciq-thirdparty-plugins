@@ -10,11 +10,10 @@
             "type": "oauth",
             "client": {
               "mode": "provided",
-              "clientId": "TODO-CHATGPT-ENTRA-APP-CLIENT-ID",
+              "clientId": "07d6b09b-964d-41a9-b1ba-08c4e15320c7",
               "tokenEndpointAuthMethod": "client_secret_post"
             },
             "baseScopes": [
-              "https://api.fabric.microsoft.com/.default",
               "offline_access"
             ]
           }
