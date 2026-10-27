@@ -119,11 +119,10 @@ servers (developer mode) for the workspace first.
 
 Use this to test the full plugin, including the skill, before it's published.
 
-1. In `plugins/fabriciq/mcp.json`, replace `TODO-CHATGPT-ENTRA-APP-CLIENT-ID`
-   with your Entra app's client ID. Don't commit your own client ID.
-2. Add your local clone as a marketplace. Don't add the GitHub repository
-   (`microsoft/fabriciq-thirdparty-plugins`): that copy still has the TODO
-   client ID, not the one you set in step 1.
+1. `plugins/fabriciq/mcp.json` uses the production ChatGPT Entra app client ID.
+   To test with your own Entra app, replace it locally and don't commit the
+   change.
+2. Add your local clone as a marketplace.
    - **Codex CLI:** `codex plugin marketplace add <path-to-your-local-clone>`
    - **ChatGPT desktop:** open the cloned repository as a project. ChatGPT reads
      `.agents/plugins/marketplace.json` from the repository root.
@@ -153,14 +152,18 @@ build.
 `mcp.json` uses the OpenAI `extensions["com.openai"]` block for OAuth, so it
 doesn't validate against the strict agent-plugins.org schema. That's expected.
 
+`baseScopes` is only `offline_access`. ChatGPT also requests the scope the MCP
+server advertises (`https://fabriciq.svc.cloud.microsoft/.default`), and Entra
+rejects a request with two `.default` scopes (AADSTS70011).
+
 Before submitting at platform.openai.com/plugins:
 
-- Set the production ChatGPT Entra app client ID in `mcp.json`. The client
-  secret is entered in the OpenAI portal, never in this repository.
+- The client secret is entered in the OpenAI portal, never in this repository.
 - Replace `assets/icon.png` and `assets/logo.png` with the final Microsoft Fabric IQ
   artwork, and prepare screenshots.
-- Replace `REVIEW_WORKSPACE_ID` and `REVIEW_REPORT_ID` in the `review` test
-  cases in `plugin.json` with items from the reviewer test workspace.
+- The `review` test cases in `plugin.json` use the "2020 product inventory
+  report" and "product model - terechen" semantic model in the reviewer test
+  workspace. Update them if that workspace changes.
 - Provide a demo recording URL (`demo_recording_url`) of the plugin working;
   it's required for MCP review.
 - Provide a dedicated reviewer test account that signs in without MFA and has

@@ -41,43 +41,43 @@
           "positive": [
             {
               "description": "Answer a question from a report",
-              "prompt": "What were total sales by region last year in the Contoso Sales report?",
+              "prompt": "In the 2020 product inventory report, what is the total stock by category?",
               "tools_triggered": "DiscoverArtifacts, GetReportMetadata, GetSemanticModelSchema, ExecuteQuery",
-              "expected_behavior": "Finds the report, reads its metadata and the underlying model schema, runs a DAX query, and returns sales by region with the values from the model."
+              "expected_behavior": "Finds the report, reads its metadata and the underlying model schema, runs a DAX query, and returns the sum of stock for each category with the values from the model."
             },
             {
               "description": "Answer a question from a semantic model",
-              "prompt": "Using the Contoso Sales semantic model, how many orders were placed per month this year?",
+              "prompt": "Using the product model - terechen semantic model, how much stock is there for each availability status?",
               "tools_triggered": "DiscoverArtifacts, GetSemanticModelSchema, ExecuteQuery",
-              "expected_behavior": "Finds the semantic model, reads its schema, runs a DAX query, and returns the monthly order counts."
+              "expected_behavior": "Finds the semantic model, reads its schema, runs a DAX query, and returns the sum of stock grouped by availability status."
             },
             {
               "description": "Resolve a pasted Fabric link",
-              "prompt": "Summarize the key numbers in this report: https://app.powerbi.com/groups/REVIEW_WORKSPACE_ID/reports/REVIEW_REPORT_ID",
+              "prompt": "Summarize the key numbers in this report: https://app.powerbi.com/groups/7b4c549a-0fbe-420d-ae33-6ae2d10c0528/reports/479e72c8-6003-4d7d-bdb6-f73db24a1843",
               "tools_triggered": "ResolveFabricItem, GetReportMetadata, GetSemanticModelSchema, ExecuteQuery",
               "expected_behavior": "Resolves the URL to the report, reads its metadata, and summarizes its main measures with values from the model."
             },
             {
               "description": "Filter by a specific value",
-              "prompt": "What were total sales for the Contoso Bikes product category last year?",
+              "prompt": "In the 2020 product inventory report, how much stock do we have of the eco thermostat camera watch?",
               "tools_triggered": "DiscoverArtifacts, GetSemanticModelSchema, ValueSearch, ExecuteQuery",
-              "expected_behavior": "Uses ValueSearch to match the category value in the model, filters the DAX query on it, and returns the total."
+              "expected_behavior": "Uses ValueSearch to match the product to the exact value \"Eco Thermostat Camera Watch\" in the model, filters the DAX query on it, and returns its stock."
             },
             {
               "description": "Clarify when several items match",
-              "prompt": "What is our total revenue?",
+              "prompt": "What is our total stock?",
               "tools_triggered": "DiscoverArtifacts",
-              "expected_behavior": "When more than one report or semantic model matches, asks the user which one to use instead of guessing."
+              "expected_behavior": "When more than one report or semantic model matches, asks the user which one to use instead of guessing; when only one matches, uses it and returns the total stock."
             }
           ],
           "negative": [
             {
               "description": "Write request is declined",
-              "prompt": "Create a new measure called Profit Margin in the Contoso Sales model."
+              "prompt": "Create a new measure called Stock Value in the product model - terechen semantic model."
             },
             {
               "description": "Deletion request is declined",
-              "prompt": "Delete the Contoso Sales report."
+              "prompt": "Delete the 2020 product inventory report."
             },
             {
               "description": "Request unrelated to Fabric data",
